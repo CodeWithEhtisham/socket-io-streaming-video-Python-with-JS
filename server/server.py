@@ -1,135 +1,240 @@
-# # from flask import Flask, render_template
-# # from flask_socketio import SocketIO, emit
-
-# # app = Flask(__name__)
-# # app.config['SECRET_KEY'] = 'secret!'
-# # socketio = SocketIO(app)
-
-# # @socketio.on('aaa')
-# # def test_connect():
-# #     print("Welcome, aaa received")
-# #     emit('aaa_response', {'data': 'Server'})
-
-# # if __name__ == '__main__':
-# #     socketio.run(app, port=8000)
-
-
-# from flask import Flask, render_template, request
-# import eventlet
-# import socketio
-# import eventlet.wsgi
-
-# sio = socketio.Server()#async_mode=async_mode)
+# import pickle
+# from flask import Flask, render_template
+# from flask_socketio import SocketIO, emit
+# import cv2
+# import numpy as np
+# import base64
+# import pickle
+# import random
 # app = Flask(__name__)
-# app.wsgi_app = socketio.WSGIApp(sio, app.wsgi_app)
+# app.config['SECRET_KEY'] = 'secret!'
+# # counter=0
+# socketio = SocketIO(app)
+# def on_aaa_response(args):
+#     print('on_aaa_response', args['data']) #D:\gil\client_server_socket\client\client.py
+# @socketio.on('connected')
+# def test_connect(args):
+#     # global counter
+#     # counter+=1
+#     print(args['counter'])
+#     data=args['data']
+#     jpg_original=base64.b64decode(data)
+#     jpg_as_np=np.frombuffer(jpg_original,dtype=np.uint8)
+#     img=cv2.imdecode(jpg_as_np,flags=1)
+#     cv2.imwrite("output.jpg",img)
 
-# dict1={}
-# i=0
-# @app.route('/')
-# def index():
-# 	return render_template('file.html')
+# if __name__ == '__main__':
+#     socketio.run(app, port=8000)
 
-# @sio.event()
-# def pingpong(sid):
-# 	print("//////////////////////////")
-# 	sio.emit("send_data", room=sid)
+
+
+# import socketio
+
+# sio = socketio.Server()
+# app = socketio.WSGIApp(sio)
+
 
 # @sio.event
-# def connect(sid, data):	
-# 	print("[INFO] Connect to the server")
-# 	pingpong(sid)
+# def connect(sid, environ):
+#     print(sid, 'connected')
 
-# @sio.event
-# def send(sid, data):
-# 	global i
-# 	if sid not in dict1:
-# 		i+=1
-# 		dict1[sid]=i
-# 	key=dict1[sid]
-# 	print("Reached here")
-# 	sio.emit('response',{'key':key, 'data':data})
-# 	pingpong(sid)
 
 # @sio.event
 # def disconnect(sid):
-# 	print("[INFO] disconnected from the server")
+#     print(sid, 'disconnected')
+
+# import eventlet
+# import socketio
+
+# sio = socketio.Server()
+# app = socketio.WSGIApp(sio)
+
+# @sio.event
+# def connect(sid, environ):
+#     print('connect ', sid)
+
+# @sio.event
+# def message(sid, data):
+#     print('message ', data['response'])
+
+# @sio.event
+# def disconnect(sid):
+#     print('disconnect ', sid)
 
 # if __name__ == '__main__':
-# 	eventlet.wsgi.server(eventlet.listen(('0.0.0.0',5000)), app)
-# 	# D:\gil\client_server_socket\server\server.py
+#     eventlet.wsgi.server(eventlet.listen(('192.168.18.207', 8080)), app)
 
+# from flask import Flask, render_template
+# from flask_socketio import SocketIO, emit
 
-# from flask import Flask
-# from flask_socketio import SocketIO, send
-# import time
-
+# # Creating a flask app and using it to instantiate a socket object
 # app = Flask(__name__)
-# app.config['SECRET_KEY'] = 'secret'
-# app.config['DEBUG'] = True
 # socketio = SocketIO(app)
 
+# # values['slider1'] and values['slider2'] store the current value of the sliders
+# # This is done to prevent data loss on page reload by client.
+# values = {
+#     'slider1': 25,
+#     'slider2': 0,
+# }
+
+# # Handler for default flask route
+# # Using jinja template to render html along with slider value as input
+# @app.route('/')
+# def index():
+#     return "render_template('index.html',**values)"
+
+# # Handler for a message recieved over 'connect' channel
 # @socketio.on('connect')
-# def on_connect():
-#     print('Server received connection')
-
+# def test_connect():
+#     print("hello")
+#     emit('after connect',  {'data':'Lets dance'})
 # @socketio.on('message')
-# def on_message(msg):
-#     print(msg)
-#     endtime = time.time() + 5 # loop for 5 secs
-#     while time.time() < endtime:
-#         socketio.emit("custom event", f"The time is: {time.strftime('%H:%M:%S')}")
-#         socketio.sleep(1)
+# def message(data):
+#     print("server printing :",data)
+#     emit('returns',  {'data':'Lets dance'})
 
-# if __name__=="__main__":
-#     socketio.run(app)
+# # Notice how socketio.run takes care of app instantiation as well.
+# if __name__ == '__main__':
+#     socketio.run(app, host='192.168.18.207',port=8080)
+
+# from flask import Flask, render_template
+# from flask_socketio import SocketIO, emit
+
+# app = Flask(__name__)
+# app.config['SECRET_KEY'] = 'secret!'
+# socketio = SocketIO(app)
+
+# @socketio.on('aaa')
+# def test_connect():
+#     print("Welcome, aaa received")
+#     emit('aaa_response', {'data': 'Server'})
+
+# if __name__ == '__main__':
+#     socketio.run(app, port=8000)
+
 
 
 #Server.py
-# from typing import TextIO
-import pickle
-from flask import Flask, render_template
+# from flask import Flask, render_template, request, jsonify
+# from flask_socketio import SocketIO,emit
+# app = Flask(__name__)
+# # app.config['SECRET_KEY'] = "Social Distance Secret"
+# socket_app = SocketIO(app)
+
+
+# @socket_app.on('connected')
+# def handle_id(data):
+#     print("server")
+#     print(data)
+#     print(request.sid)
+#     emit('message', {"Data": "Device_id"})
+
+# if __name__ == '__main__':
+#     socket_app.run(app, debug=True, host='127.0.0.1', port=3000)
+
+# from flask import Flask, render_template
+# from flask_socketio import SocketIO, emit
+    
+# app = Flask(__name__)
+# app.config['SECRET_KEY'] = 'secret!'
+# socketio = SocketIO(app)
+
+# @app.route('/')
+# def index():
+#     return "hello html"
+
+# @socketio.event
+# def my_event(message):
+#     print("server message recieved")
+#     emit('my_response', {'data': 'got it!'})
+
+# if __name__ == '__main__':
+#     socketio.run(app,debug=True, host='127.0.0.1', port=3000)
+
+from flask import Flask
 from flask_socketio import SocketIO, emit
-import cv2
-import numpy as np
-import base64
-import pickle
-import random
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-# counter=0
 socketio = SocketIO(app)
-def on_aaa_response(args):
-    print('on_aaa_response', args['data']) #D:\gil\client_server_socket\client\client.py
-@socketio.on('connected')
-def test_connect(args):
-    # global counter
-    # counter+=1
-    print(args['counter'])
-    data=args['data']
-    jpg_original=base64.b64decode(data)
-    jpg_as_np=np.frombuffer(jpg_original,dtype=np.uint8)
-    img=cv2.imdecode(jpg_as_np,flags=1)
-    cv2.imwrite("output.jpg",img)
-    # cv2.imshow("server",img)
-    # if cv2.waitKey(0) & 0xFF == ord('Q'):cv2.
-    #     # break
-    #     pass
-    # cv2.imwrite(f'images/{random.random()}.jpg',img)
 
-    # nparr = np.fromstring(data, np.uint8)
-    # frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    # data=pickle.loads(args)
-	# data=args['data']
-    # jpg=base64.b64decode(data,)
-    # jpg_as_np = np.frombuffer(jpg, dtype=np.uint8)
-    # image_buffer = cv2.imdecode(jpg_as_np, flags=1)
-    # cv2.imshow("server side",img)
-    # cv2.waitKey(0)
+@socketio.on('connect')
+def test_connect():
+    print('connected')
 
-	# socketio.on('connected', on_aaa_response)
-    # print("Welcome, aaa received")
-	# print()
-    # emit('aaa_response', {'data': 'Server'})
+
+@socketio.on('disconnect')
+def test_disconnect():
+    print('Client disconnected')
+
+@socketio.on('message')
+def handle_message(msg):
+    print('Recieved',msg)
+
+@socketio.on('json')
+def handle_json(json):
+    print(str(json))
 
 if __name__ == '__main__':
-    socketio.run(app, port=8000)
+    socketio.run(app,debug=True)
+
+
+
+# from flask import Flask
+# from flask_socketio import SocketIO, emit
+
+# app = Flask(__name__)
+# app.config['SECRET_KEY'] = 'secret!'
+# socketio = SocketIO(app)
+
+# @socketio.on('connect')
+# def test_connect():
+#     print('connected')
+
+
+# @socketio.on('disconnect')
+# def test_disconnect():
+#     print('Client disconnected')
+
+# @socketio.on('message')
+# def handle_message(msg):
+#     print('Recieved',msg)
+
+# @socketio.on('json')
+# def handle_json(json):
+#     print(str(json))
+
+# if __name__ == '__main__':
+#     socketio.run(app,debug=True,host='127.0.0.1',port=5000)
+
+# from aiohttp import web
+# import socketio
+
+# sio = socketio.AsyncServer()
+# app = web.Application()
+# sio.attach(app)
+
+# async def index(request):
+#     """Serve the client-side application."""
+#     with open('index.html') as f:
+#         return web.Response(text=f.read(), content_type='text/html')
+
+# @sio.event
+# def connect(sid, environ):
+#     print("connect ", sid)
+
+# @sio.event
+# async def chat_message(sid, data):
+#     print("message ", data)
+#     await sio.emit('reply', room=sid)
+
+# @sio.event
+# def disconnect(sid):
+#     print('disconnect ', sid)
+
+# # app.router.add_static('/static', 'static')
+# # app.router.add_get('/', index)
+
+# if __name__ == '__main__':
+#     web.run_app(app,host='192.168.18.207')
