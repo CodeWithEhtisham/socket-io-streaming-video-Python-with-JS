@@ -133,51 +133,88 @@
 # if __name__ == '__main__':
 #     socket_app.run(app, debug=True, host='127.0.0.1', port=3000)
 
-# from flask import Flask, render_template
-# from flask_socketio import SocketIO, emit
-    
-# app = Flask(__name__)
-# app.config['SECRET_KEY'] = 'secret!'
-# socketio = SocketIO(app)
-
-# @app.route('/')
-# def index():
-#     return "hello html"
-
-# @socketio.event
-# def my_event(message):
-#     print("server message recieved")
-#     emit('my_response', {'data': 'got it!'})
-
-# if __name__ == '__main__':
-#     socketio.run(app,debug=True, host='127.0.0.1', port=3000)
-
-from flask import Flask
+from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
-
+    
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
-@socketio.on('connect')
-def test_connect():
-    print('connected')
+@app.route('/')
+def index():
+    print("html")
+    return "hello html"
+# @socketio.
+@socketio.event
+def connect():
+    print("connection successful")
+    emit('message_to_client', data="data sending")
 
-
-@socketio.on('disconnect')
-def test_disconnect():
-    print('Client disconnected')
-
-@socketio.on('message')
-def handle_message(msg):
-    print('Recieved',msg)
-
-@socketio.on('json')
-def handle_json(json):
-    print(str(json))
+@socketio.event
+def message(sid, data):
+    print('message ', data['response'])
 
 if __name__ == '__main__':
-    socketio.run(app,debug=True)
+    socketio.run(app,debug=True, host='127.0.0.1', port=5000)
+
+
+
+# from flask import Flask
+# from flask_socketio import SocketIO, emit
+
+# app = Flask(__name__)
+# app.config['SECRET_KEY'] = 'secret!'
+# socketio = SocketIO(app)
+
+# @socketio.on('connect')
+# def test_connect():
+#     print('connected')
+
+
+# @socketio.on('disconnect')
+# def test_disconnect():
+#     print('Client disconnected')
+
+# @socketio.on('message')
+# def handle_message(msg):
+#     print('Recieved',msg)
+
+# @socketio.on('json')
+# def handle_json(json):
+#     print(str(json))
+
+# if __name__ == '__main__':
+#     socketio.run(app,debug=True)
+
+
+
+
+# from flask import Flask
+# from flask_socketio import SocketIO, emit
+
+# app = Flask(__name__)
+# app.config['SECRET_KEY'] = 'secret!'
+# socketio = SocketIO(app)
+
+# @socketio.on('connect')
+# def test_connect():
+#     print('connected')
+
+
+# @socketio.on('disconnect')
+# def test_disconnect():
+#     print('Client disconnected')
+
+# @socketio.on('message')
+# def handle_message(msg):
+#     print('Recieved',msg)
+
+# @socketio.on('json')
+# def handle_json(json):
+#     print(str(json))
+
+# if __name__ == '__main__':
+#     socketio.run(app,debug=True)
 
 
 

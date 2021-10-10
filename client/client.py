@@ -37,31 +37,56 @@
 # socketIO.emit('connected',{'data': 'client'})
 # socketIO.wait(seconds=1)
 
+import socketio
+
+sio = socketio.Client()
+
+@sio.event
+def connect():
+    print('connection established')
+    print('message sent')
+
+@sio.event
+def my_message(data):
+    print('message received with ', data)
+    sio.emit('message', {'response': 'my response'})
+
+@sio.event
+def disconnect():
+    print('disconnected from server')
+@sio.event
+def message_to_client(data):
+    print("server message received ",data)
+    sio.emit('message',data='detection')
+
+sio.connect('http://127.0.0.1:5000')
+sio.wait()
+
+
+# import asyncio
 # import socketio
 
-# sio = socketio.Client(logger=True, engineio_logger=True)
+# sio = socketio.AsyncClient()
 
 # @sio.event
-# def connect():
+# async def connect():
 #     print('connection established')
-#     for i in range(4):
-#         print("sending data to server")
-#         sio.emit('message', {'response': 'my response'})
-
-# @sio.event
-# def my_message(data):
-#     print('message received with ', data)
-#     sio.emit('message', {'response': 'my response'})
+#     await sio.emit('message',data='detection', callback=done)
+#     print('message sent')
 
 # @sio.event
 # def disconnect():
 #     print('disconnected from server')
-# @sio.event
-# def returns(data):
-#     print("server message recieved ",data)
 
-# sio.connect('http://192.168.18.207:8080')
-# sio.wait()
+# async def done():
+#     await sio.disconnect()
+
+# async def main():
+#     await sio.connect('http://localhost:5000')
+#     await sio.wait()
+
+# if __name__ == '__main__':
+#     asyncio.run(main())
 
 
 # import asyncio
@@ -89,42 +114,45 @@
 # if __name__ == '__main__':
 #     main()
 
-import asyncio
-import socketio
+# import asyncio
+# import socketio
 
-sio = socketio.AsyncClient()
+# sio = socketio.AsyncClient()
 
-@sio.event
-async def connect():
-    print('connection established')
-    await sio.emit('message',data='detection', callback=done)
-    print('message sent')
+# @sio.event
+# async def connect():
+#     print('connection established')
+#     await sio.emit('message',data='detection', callback=done)
+#     print('message sent')
 
-@sio.event
-def disconnect():
-    print('disconnected from server')
+# @sio.event
+# def disconnect():
+#     print('disconnected from server')
 
-async def done():
-    await sio.disconnect()
+# async def done():
+#     await sio.disconnect()
 
-async def main():
-    await sio.connect('http://localhost:5000')
-    await sio.wait()
+# async def main():
+#     await sio.connect('http://localhost:5000')
+#     await sio.wait()
 
-if __name__ == '__main__':
-    asyncio.run(main())
+# if __name__ == '__main__':
+#     asyncio.run(main())
 
 #Client.py
 # import time
-# import socketio
-# sio = socketio.Client(engineio_logger=True)
+import socketio
+sio = socketio.Client(engineio_logger=True)
 # start_timer = None
 
 # # if __name__ == '__main__':
 # sio.connect('http://127.0.0.1:3000')
 # sio.wait()
-# sio.emit('connected', {"Data": "Device_id"})
-
+# sio.emit('message', {"Data": "Device_id"})
+# @socketio.event
+# def connect():
+#     print("client message recieved",message)
+    # sio.emit('my_response', {'data': 'got it!'})
 # @sio.event
 # def message(data):
 #     print("client receiving the message from the server")
