@@ -135,7 +135,9 @@
 
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
-    
+import base64
+import cv2    
+import numpy as np
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
@@ -146,13 +148,23 @@ def index():
     return "hello html"
 # @socketio.
 @socketio.event
-def connect():
+def connect(sid):
     print("connection successful")
-    emit('message_to_client', data="data sending")
+    print("sid server ",sid)
+    # emit('message_to_client',d="hellos",to=sid)
 
 @socketio.event
-def message(sid, data):
-    print('message ', data['response'])
+def message(data):
+    print("message server recieved",data['sid'])
+    img=data['frame']
+    jpg_original=base64.b64decode(img)
+    jpg_as_np=np.frombuffer(jpg_original,dtype=np.uint8)
+    cv2.imshow('my',jpg_as_np)
+    if cv2.waitKey(1) & 0xFF == 27:
+        # break
+        cv2.destroyAllWindows()
+    # img=cv2.imdecode(jpg_as_np,flags=1)
+    # emit('message_to_client',data=data)
 
 if __name__ == '__main__':
     socketio.run(app,debug=True, host='127.0.0.1', port=5000)

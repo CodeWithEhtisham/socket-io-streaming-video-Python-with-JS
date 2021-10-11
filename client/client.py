@@ -38,26 +38,43 @@
 # socketIO.wait(seconds=1)
 
 import socketio
-
+import cv2
+import base64
 sio = socketio.Client()
-
+cap=cv2.VideoCapture(0)
 @sio.event
 def connect():
     print('connection established')
-    print('message sent')
+    # print('message sent')
+    # while True:
+    #     ret,frame=cap.read()
+    #     if not ret:
+    #         break
+    #     # frame=cv2.resize(frame,(128,128))
+    #     print(frame.shape)
+    #     string_img = base64.b64encode(cv2.imencode('.jpg', frame)[1]).decode()
+    #     sio.emit('message',data={"sid":"python-client",
+    #     'frame':string_img})
+    
 
-@sio.event
-def my_message(data):
-    print('message received with ', data)
-    sio.emit('message', {'response': 'my response'})
+
+    # sio.emit('message',data='detection')
+
+
+# @sio.event
+# def my_message(data):
+#     print('message received with ', data)
+#     sio.emit('message', {'response': 'my response'})
 
 @sio.event
 def disconnect():
     print('disconnected from server')
-@sio.event
-def message_to_client(data):
-    print("server message received ",data)
-    sio.emit('message',data='detection')
+# @sio.event
+# def message_to_client(data):
+#     # print("sid client side",sid)
+#     print("server message received ",data)
+#     print("message to client recieved")
+#     sio.emit('message',data='detection')
 
 sio.connect('http://127.0.0.1:5000')
 sio.wait()
@@ -141,8 +158,8 @@ sio.wait()
 
 #Client.py
 # import time
-import socketio
-sio = socketio.Client(engineio_logger=True)
+# import socketio
+# sio = socketio.Client(engineio_logger=True)
 # start_timer = None
 
 # # if __name__ == '__main__':
