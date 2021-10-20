@@ -45,16 +45,20 @@ cap=cv2.VideoCapture(0)
 @sio.event
 def connect():
     print('connection established')
-    # print('message sent')
-    # while True:
-    #     ret,frame=cap.read()
-    #     if not ret:
-    #         break
-    #     # frame=cv2.resize(frame,(128,128))
-    #     print(frame.shape)
-    #     string_img = base64.b64encode(cv2.imencode('.jpg', frame)[1]).decode()
-    #     sio.emit('message',data={"sid":"python-client",
-    #     'frame':string_img})
+    print('message sent')
+    while True:
+        
+
+        ret,frame=cap.read()
+        if not ret:
+            break
+        frame=cv2.resize(frame,(128,128))
+        # print(frame.shape)
+        string_img = base64.b64encode(cv2.imencode('.jpg', frame)[1]).decode()
+        sio.emit('my image',"imagessssss")
+        # break
+        # sio.emit('message',data={"sid":"python-client",
+        # 'frame':string_img})
     
 
 

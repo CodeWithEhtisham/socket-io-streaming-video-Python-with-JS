@@ -133,43 +133,65 @@
 # if __name__ == '__main__':
 #     socket_app.run(app, debug=True, host='127.0.0.1', port=3000)
 
-from flask import Flask, render_template
-from flask_socketio import SocketIO, emit
-import base64
-import cv2    
-import numpy as np
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
+# from flask import Flask, render_template
+# from flask_socketio import SocketIO, emit
+# app = Flask(__name__)
+# app.config['SECRET_KEY'] = 'secret'
+# socketio = SocketIO(app)
 
-@app.route('/')
-def index():
-    print("html")
-    return "hello html"
-# @socketio.
-@socketio.event
-def connect(sid):
-    print("connection successful")
-    print("sid server ",sid)
-    # emit('message_to_client',d="hellos",to=sid)
+# @app.route('/')
+# def index():
+#     return render_template('index.html')
 
-@socketio.event
-def message(data):
-    print("message server recieved",data['sid'])
-    img=data['frame']
-    jpg_original=base64.b64decode(img)
-    jpg_as_np=np.frombuffer(jpg_original,dtype=np.uint8)
-    cv2.imshow('my',jpg_as_np)
-    if cv2.waitKey(1) & 0xFF == 27:
-        # break
-        cv2.destroyAllWindows()
-    # img=cv2.imdecode(jpg_as_np,flags=1)
-    # emit('message_to_client',data=data)
+# @socketio.on('my event', namespace='/test')
+# def handle_my_custom_event(message):
+#     print ('receive')
+#     emit('connect', {'num': 5, 'kind': 'apple', 'message': message['data']})
 
-if __name__ == '__main__':
-    socketio.run(app,debug=True, host='127.0.0.1', port=5000)
+# if __name__ == '__main__':
+#     socketio.run(app)
 
+# #####################################################################################################################################################333333
 
+# from flask import Flask, render_template
+# from flask_socketio import SocketIO, emit
+# import base64
+# import cv2    
+# import numpy as np
+# from numpy.lib.stride_tricks import broadcast_to
+# app = Flask(__name__)
+# app.config['SECRET_KEY'] = 'secret!'
+# socketio = SocketIO(app)
+
+# @app.route('/')
+# def index():
+#     # print("html")
+#     return render_template("index.html")
+# # @socketio.
+# @socketio.event
+# def connect():
+#     print("connection successful")
+#     # emit('image',data={"hello":"data"},broadcast=True)
+#     # print("sid server ",sid)
+#     # emit('message_to_client',d="hellos",to=sid)
+
+# @socketio.event
+# def message(data):
+#     # print("message server recieved",data['sid'])
+#     img=data['frame']
+#     jpg_original=base64.b64decode(img)
+#     jpg_as_np=np.frombuffer(jpg_original,dtype=np.uint8)
+#     # cv2.imshow('my',jpg_as_np)
+#     # if cv2.waitKey(1) & 0xFF == 27:
+#     #     # break
+#     #     cv2.destroyAllWindows()
+#     img=cv2.imdecode(jpg_as_np,flags=1)
+#     emit('image',data=img,namespace='/test')
+
+# if __name__ == '__main__':
+#     socketio.run(app,debug=True, host='127.0.0.1', port=5000)
+
+#####################################################################################################################################################################################
 
 # from flask import Flask
 # from flask_socketio import SocketIO, emit
@@ -287,3 +309,33 @@ if __name__ == '__main__':
 
 # if __name__ == '__main__':
 #     web.run_app(app,host='192.168.18.207')
+
+
+from flask import Flask, render_template
+from flask_socketio import SocketIO, emit,send
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret'
+socketio = SocketIO(app)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+@socketio.on("connect")
+def connect():
+    print("connected client")
+    emit("imagedata","image data")
+def cb():
+    print("received data form worker")
+@socketio.on('my image')
+def get_image(image):
+    print(image)
+    emit('image', image,broadcast=True)
+    
+
+# @socketio.on('my event', namespace='/test')
+# def handle_my_custom_event(message):
+#     print ('receive',message)
+#     emit('connect', {'num': 5, 'kind': 'apple', 'message': message['data']})
+
+if __name__ == '__main__':
+    socketio.run(app)
