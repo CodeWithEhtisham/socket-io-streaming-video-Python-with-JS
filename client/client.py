@@ -52,10 +52,13 @@ def connect():
         ret,frame=cap.read()
         if not ret:
             break
-        frame=cv2.resize(frame,(128,128))
+        # frame=cv2.resize(frame,(128,128))
+        frame=base64.encodestring(cv2.imencode('.png',frame)[1])
+
+
         # print(frame.shape)
-        string_img = base64.b64encode(cv2.imencode('.jpg', frame)[1]).decode()
-        sio.emit('my image',"imagessssss")
+        # string_img = base64.b64encode(cv2.imencode('.jpg', frame)[1]).decode()
+        sio.emit('my image',frame)
         # break
         # sio.emit('message',data={"sid":"python-client",
         # 'frame':string_img})
@@ -80,7 +83,7 @@ def disconnect():
 #     print("message to client recieved")
 #     sio.emit('message',data='detection')
 
-sio.connect('http://127.0.0.1:5000')
+sio.connect('http://127.0.0.1:8000')
 sio.wait()
 
 
