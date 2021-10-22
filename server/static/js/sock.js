@@ -11,14 +11,14 @@ sio.on('disconnect', () => {
 
 sio.on('image', (data) => {
     document.getElementById("frames").src = "data:image/png;base64," + data;
-    // console.log("image data recieved website")
+    console.log("image data recieved website")
     // console.log(data);
 });
 
-// sio.on("imagedata",(data) => {
+sio.on("imagedata",(data) => {
 
-//   document.getElementById("frames").src = "data:image/png;base64," + yourByteArrayAsBase64;
-//     // console.log("image data")
-//     // console.log(data)
+  document.getElementById("frames").src = "data:image/png;base64," + yourByteArrayAsBase64;
+    console.log("image data")
+    console.log(data)
 
-// });
+});

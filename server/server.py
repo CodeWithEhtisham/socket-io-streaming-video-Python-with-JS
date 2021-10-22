@@ -328,7 +328,7 @@ def cb():
     print("received data form worker")
 @socketio.on('my image')
 def get_image(image):
-    print(image)
+    # print(image)
     emit('image', image,broadcast=True)
     
 
@@ -338,4 +338,4 @@ def get_image(image):
 #     emit('connect', {'num': 5, 'kind': 'apple', 'message': message['data']})
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app,'0.0.0.0',port=4444)

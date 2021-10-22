@@ -39,49 +39,43 @@
 
 import socketio
 import cv2
+import time
 import base64
 sio = socketio.Client()
 cap=cv2.VideoCapture(0)
+# cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')) # depends on fourcc available camera
+# cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+# cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+# cap.set(cv2.CAP_PROP_FPS, 5)
+
 @sio.event
 def connect():
     print('connection established')
     print('message sent')
+    frame_rate = 20
+    prev = 0
     while True:
         
-
+        time_elapsed = time.time() - prev
         ret,frame=cap.read()
         if not ret:
             break
-        # frame=cv2.resize(frame,(128,128))
-        frame=base64.encodestring(cv2.imencode('.png',frame)[1])
-
-
+        # frame=cv2.resize(frame,(300,300))
+        print(frame.shape)
+        if time_elapsed > 1./frame_rate:
+            prev = time.time()
+        # frame=base64.encodestring(cv2.imencode('.png',frame)[1])
+            frame = base64.b64encode(cv2.imencode('.jpg', frame,[cv2.IMWRITE_JPEG_QUALITY, 80])[1]).decode()
+            
         # print(frame.shape)
         # string_img = base64.b64encode(cv2.imencode('.jpg', frame)[1]).decode()
-        sio.emit('my image',frame)
-        # break
-        # sio.emit('message',data={"sid":"python-client",
-        # 'frame':string_img})
-    
+            sio.emit('my image',frame)
 
-
-    # sio.emit('message',data='detection')
-
-
-# @sio.event
-# def my_message(data):
-#     print('message received with ', data)
-#     sio.emit('message', {'response': 'my response'})
 
 @sio.event
 def disconnect():
     print('disconnected from server')
-# @sio.event
-# def message_to_client(data):
-#     # print("sid client side",sid)
-#     print("server message received ",data)
-#     print("message to client recieved")
-#     sio.emit('message',data='detection')
+
 
 sio.connect('http://127.0.0.1:8000')
 sio.wait()
